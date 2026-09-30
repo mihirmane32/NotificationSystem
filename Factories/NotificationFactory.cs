@@ -7,13 +7,17 @@ namespace NotificationSystem.Factories
         public INotificationChannel CreateChannel(string type)
         {
 
-            switch(type)
+            switch(type.ToLower())
             {
-                case "1":
+                case "email":
                     return new EmailNotification();
-                    break;
+                case "sms":
+                    return new SmsNotification();
+                case "push":
+                    return new PushNotification();
                 default:
-                    break;
+                    throw new ArgumentException($"Unknown notification type: {type}");
+
             }
         }
     }
