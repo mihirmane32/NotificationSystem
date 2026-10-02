@@ -10,11 +10,15 @@ A console app for practicing core design patterns (Factory, Observer, Strategy, 
 - `IOrderObserver` - a common interface for anything that wants to react to an order's status changing
 - `CustomerEmailObserver`, `RestaurantDashboardObserver` - independent reactions to status change
 - `Order` - holds a dynamic list of subscribed observers; notifies all of them when the status changes, with no knowledge of who or how many are listening
+- `IFeeStrategy` - a common interface for interchangeable fee-calculation algorithm
+- `FlatFeeStrategy`, `DistanceFeeStrategy`, `SurgeFeeStrategy` - each a different pricing formula
+- `Checkout` - receives an `IFeeStrategy` via its constructor and delegates fee calculation to it, without knowing the formula itself
 
 ## Design notes
 
 - **Factory pattern**: `NotificationFactory.CreateChannel` returns `INotificationChannel`, the interface - not a concrete class. Calling code only depends on the interface, so adding a new channel later means creating one new class and adding one case to the factory switch without changing existing code.
 - **Observer pattern**: `Order` never calls any observer by name. Observers subscribe/unsubscribe at runtime, and `Order` just loops over whoever's currently subscribed. Adding a new reaction (e.g. analytics tracking) means one new class and one `Subscribe` call - `Order` itself never changes.
+- **Strategy pattern**: `Checkout` depends only on `IFeeStrategy`, not on any specific formula. Unlike Factory (which translates an unknown string into the right object), Strategy is used when the caller already knows which algorithm it wants at the point of writing the code - it's injected directly via the constructor, no string-to-object translation needed. Both patterns use the same underlyingtool (interface + interchangeable implementations), applied to different problems.
 
 ## Project structure
 
@@ -37,6 +41,12 @@ NotificationSystem/
 |-- Orders/
 |   |-- Order.cs
 |
+|-- Strategy/
+|   |-- DistanceFeeStrategy.cs
+|   |-- FlatFeeStrategy.cs
+|   |-- IFeeStrategy.cs
+|   |-- SurgeFeeStrategy.cs
+|
 |-- Program.cs
 ```
 
@@ -49,4 +59,4 @@ dotnet run
 
 ## Status
 
-Factory and Observer pattern complete. Next: Strategy (swapping an algorithm at runtime, e.g. delivery fee calculation).
+Factory, Observer, and Strategy pattern complete. Next Adapter (wrapping incompatible interfaces, e.g. different payment providers).

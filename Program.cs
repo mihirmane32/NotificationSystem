@@ -1,6 +1,7 @@
 ﻿using NotificationSystem.Factories;
 using NotificationSystem.Observers;
 using NotificationSystem.Orders;
+using NotificationSystem.Strategies;
 
 // ---------- FACTORY PATTERN ----------
 Console.WriteLine("=== Factory Pattern ===");
@@ -28,3 +29,12 @@ order.Unsubscribe(emailObserver);
 
 Console.WriteLine("-- Updating to Delivered (customer unsubscribed)");
 order.UpdateStatus("Delivered");
+
+// ---------- STRATEGY PATTERN ----------
+Console.WriteLine("\n=== Strategy Pattern ===");
+
+var normalCheckout = new Checkout(new DistanceFeeStrategy());
+Console.WriteLine($"Normal delivery fee: {normalCheckout.GetDeliveryFee(10, 50)}");
+
+var surgeCheckout = new Checkout(new SurgeFeeStrategy());
+Console.WriteLine($"Surge delivery fee: {surgeCheckout.GetDeliveryFee(10, 50)}");
