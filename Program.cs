@@ -1,6 +1,8 @@
-﻿using NotificationSystem.Factories;
+﻿using NotificationSystem.Adapters;
+using NotificationSystem.Factories;
 using NotificationSystem.Observers;
 using NotificationSystem.Orders;
+using NotificationSystem.PaymentProviders;
 using NotificationSystem.Strategies;
 
 // ---------- FACTORY PATTERN ----------
@@ -38,3 +40,12 @@ Console.WriteLine($"Normal delivery fee: {normalCheckout.GetDeliveryFee(10, 50)}
 
 var surgeCheckout = new Checkout(new SurgeFeeStrategy());
 Console.WriteLine($"Surge delivery fee: {surgeCheckout.GetDeliveryFee(10, 50)}");
+
+// ---------- ADAPTER PATTERN ----------
+Console.WriteLine("\n=== Adapter Pattern ===");
+
+IPaymentProcessor stripePayment = new StripeAdapter(new StripeGateway());
+stripePayment.Pay(49.99m);
+
+IPaymentProcessor paypalPayment = new PayPalAdapter(new PayPalProcessor());
+paypalPayment.Pay(49.99m);
