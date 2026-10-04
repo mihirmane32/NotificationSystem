@@ -1,5 +1,6 @@
 ﻿using NotificationSystem.Adapters;
 using NotificationSystem.Factories;
+using NotificationSystem.Logging;
 using NotificationSystem.Observers;
 using NotificationSystem.Orders;
 using NotificationSystem.PaymentProviders;
@@ -49,3 +50,9 @@ stripePayment.Pay(49.99m);
 
 IPaymentProcessor paypalPayment = new PayPalAdapter(new PayPalProcessor());
 paypalPayment.Pay(49.99m);
+
+// ---------- SINGLETON PATTERN ----------
+Console.WriteLine("\n=== Singleton Pattern ===");
+
+OrderLogger.Instance.Log("Order created.");
+OrderLogger.Instance.Log("Payment processed.");

@@ -16,6 +16,7 @@ A console app for practicing core design patterns (Factory, Observer, Strategy, 
 - `IPaymentProcessor` - your own interface for processing a payment 
 - `StripeGateway`, `PayPalProcessor` - simulated third-party payment classes with incompatible, unrelated method signatures (you can't edit these)
 - `StripeAdapter`, `PayPalAdapter` - translate your interface's `Pay(decimal)` call into each provider's actual method and parameters
+- `OrderLogger` - implemented as a Singleton (private constructor, static `Instance` property); demonstrate the pattern's mechanism and its real drawback
 
 ## Design notes
 
@@ -23,6 +24,7 @@ A console app for practicing core design patterns (Factory, Observer, Strategy, 
 - **Observer pattern**: `Order` never calls any observer by name. Observers subscribe/unsubscribe at runtime, and `Order` just loops over whoever's currently subscribed. Adding a new reaction (e.g. analytics tracking) means one new class and one `Subscribe` call - `Order` itself never changes.
 - **Strategy pattern**: `Checkout` depends only on `IFeeStrategy`, not on any specific formula. Unlike Factory (which translates an unknown string into the right object), Strategy is used when the caller already knows which algorithm it wants at the point of writing the code - it's injected directly via the constructor, no string-to-object translation needed. Both patterns use the same underlyingtool (interface + interchangeable implementations), applied to different problems.
 - **Adspter pattern**: unlike strategy (where you write every implementing class yourself, so that naturally match your interface), Adapter exists specifically for code you "can't" modify - third-party or external classes with incompatible method names/signatures. The adapter class implements your interface and internally translates calls into whatever the wrapped class actually needs. If you control the code being wrapped, you don't need Adapter - you'd implement the interface directlyinstead.
+- **Singleton pattern**: guarantees a single shared instance by making the constructor private and exposing a static `Instance` property. Demonstrated here deliberately as a cautionary example: Singleton hides a class's dependencies (any class can silently reach `OrderLogger.Instance` with nothing showing up in its constructor) and make substituting a fake/test version effectively impossible, unlike constructor injection (used elsewhere in this project - `Checkout` + `IFeeStrategy`), In real code, prefer creating one instance explicitly (e.g. in `Program.cs`) and injecting it via constructors, reversing the true Singleton for rare, genuinely global, rarely-tested cases.
 
 ## Project structure
 
@@ -41,6 +43,9 @@ NotificationSystem/
 |
 |-- Factories/
 |   |-- NotificationFactory.cs      # Decides which concrete channel to create
+|
+|-- Logging/
+|   |-- OrderLogger.cs
 |
 |-- Observers/
 |   |-- IOrderObserver.cs
@@ -72,4 +77,4 @@ dotnet run
 
 ## Status
 
-Factory, Observer, Strategy, and Adapter pattern complete. Next Singleton (one shared instance - and when NOT to use it).
+All five "start with these" patterns complete: Factory, Observer, Strategy, Adapter, Singleton. Project's core goal is achieved
